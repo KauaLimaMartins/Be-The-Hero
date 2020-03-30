@@ -1,21 +1,47 @@
 const express = require("express");
+const { celebrate } = require("celebrate");
 
-const routes = express.Router();
+const Routes = express.Router();
 
 const OngController = require("./controllers/OngController");
 const IncidentController = require("./controllers/IncidentController");
 const ProfileController = require("./controllers/ProfileController");
 const SessionController = require("./controllers/SessionController");
 
-routes.post("/sessions", SessionController.store);
+const sessionValidator = require("./validators/sessionValidator");
+const ongValidator = require("./validators/ongValidator");
+const profileValidator = require("./validators/profileValidator");
+const incidentIdValidator = require("./validators/incidentIdValidator");
+const incidentPageValidator = require("./validators/incidentPageValidator");
+const incidentBodyValidator = require("./validators/incidentBodyValidator");
+const incidentHeaderValidator = require("./validators/incidentHeaderValidator");
 
-routes.get("/ongs", OngController.index);
-routes.post("/ongs", OngController.store);
+// Validate login id
+Routes.post("/sessions", celebrate(sessionValidator), SessionController.store);
 
-routes.get("/profile", ProfileController.index);
+// Routes fro NGOs
+Routes.get("/ongs", OngController.index);
+Routes.post("/ongs", celebrate(ongValidator), OngController.store);
 
-routes.get("/incidents", IncidentController.index);
-routes.post("/incidents", IncidentController.store);
-routes.delete("/incidents/:id", IncidentController.destroy);
+// List all incidents from all NGOs
+Routes.get("/profile", celebrate(profileValidator), ProfileController.index);
 
-module.exports = routes;
+// Routes for incidents
+Routes.get(
+  "/incidents",
+  celebrate(incidentPageValidator),
+  IncidentController.index
+);
+Routes.post(
+  "/incidents",
+  celebrate(incidentBodyValidator),
+  celebrate(incidentHeaderValidator),
+  IncidentController.store
+);
+Routes.delete(
+  "/incidents/:id",
+  celebrate(incidentIdValidator),
+  IncidentController.destroy
+);
+
+module.exports = Routes;
