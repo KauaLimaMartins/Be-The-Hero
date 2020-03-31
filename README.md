@@ -11,7 +11,7 @@
 
 Be The Hero is an application developed where people manage to make donations to NGOs who need
 
-Demo Vídeo: <a>https://www.linkedin.com/posts/kaualima_bethehero-webdevelopment-androiddevelopment-activity-6650794990324842498-9cj0</a>
+Demo Vídeo: <a> https://www.linkedin.com/posts/kaualima_bethehero-webdevelopment-androiddevelopment-activity-6650794990324842498-9cjO </a>
 
 ## Technologies used
 
