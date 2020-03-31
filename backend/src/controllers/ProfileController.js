@@ -1,15 +1,12 @@
-const connection = require("../database/connection");
+const connection = require('../database/connection') 
 
-class ProfileController {
-  async index(request, response) {
-    const ong_id = request.headers.authorization;
+module.exports = {
+  async index(req, res) {
+    const ong_id = req.headers.authorization 
+    const incidents = await connection('incidents')
+      .where('ong_id', ong_id)
+      .select('*')
 
-    const allIncidents = await connection("incidents")
-      .where("ong_id", ong_id)
-      .select("*");
-
-    return response.json(allIncidents);
+    return res.json(incidents)
   }
 }
-
-module.exports = new ProfileController();

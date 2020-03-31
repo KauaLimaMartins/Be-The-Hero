@@ -1,47 +1,44 @@
-const express = require("express");
-const { celebrate } = require("celebrate");
+const express = require('express')
+const { celebrate, Segments, Joi } = require('celebrate')
 
-const Routes = express.Router();
+const OngController = require('./controllers/OngController')
+const IncidentController = require('./controllers/IncidentController')
+const ProfileController = require('./controllers/ProfileController')
+const SessionController = require('./controllers/SessionController')
 
-const OngController = require("./controllers/OngController");
-const IncidentController = require("./controllers/IncidentController");
-const ProfileController = require("./controllers/ProfileController");
-const SessionController = require("./controllers/SessionController");
+const routes = express.Router()
 
-const sessionValidator = require("./validators/sessionValidator");
-const ongValidator = require("./validators/ongValidator");
-const profileValidator = require("./validators/profileValidator");
-const incidentIdValidator = require("./validators/incidentIdValidator");
-const incidentPageValidator = require("./validators/incidentPageValidator");
-const incidentBodyValidator = require("./validators/incidentBodyValidator");
-const incidentHeaderValidator = require("./validators/incidentHeaderValidator");
+routes.post('/sessions', SessionController.create)
 
-// Validate login id
-Routes.post("/sessions", celebrate(sessionValidator), SessionController.store);
+routes.get('/ongs', OngController.index)
 
-// Routes fro NGOs
-Routes.get("/ongs", OngController.index);
-Routes.post("/ongs", celebrate(ongValidator), OngController.store);
+routes.post('/ongs', celebrate({
+  [Segments.BODY]: Joi.object().keys({
+    name: Joi.string().required(),
+    email: Joi.string().required().email(),
+    whatsapp: Joi.string().required().min(10).max(11),
+    city: Joi.string().required(),
+    uf: Joi.string().required().length(2)
+  })
+}), OngController.create)
 
-// List all incidents from all NGOs
-Routes.get("/profile", celebrate(profileValidator), ProfileController.index);
+routes.get('/profile', celebrate({
+  [Segments.HEADERS]: Joi.object({
+    authorization: Joi.string().required(),  
+  }).unknown(),
+}), ProfileController.index)
 
-// Routes for incidents
-Routes.get(
-  "/incidents",
-  celebrate(incidentPageValidator),
-  IncidentController.index
-);
-Routes.post(
-  "/incidents",
-  celebrate(incidentBodyValidator),
-  celebrate(incidentHeaderValidator),
-  IncidentController.store
-);
-Routes.delete(
-  "/incidents/:id",
-  celebrate(incidentIdValidator),
-  IncidentController.destroy
-);
+routes.get('/incidents', celebrate({
+  [Segments.QUERY]: Joi.object().keys({
+    page: Joi.number(),
+  })
+}), IncidentController.index)
 
-module.exports = Routes;
+routes.post('/incidents', IncidentController.create)
+routes.delete('/incidents/:id', celebrate({
+  [Segments.PARAMS]: Joi.object().keys({
+    id: Joi.number().required(),
+  })
+}), IncidentController.delete)
+
+module.exports = routes

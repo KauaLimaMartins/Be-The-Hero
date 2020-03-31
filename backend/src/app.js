@@ -1,26 +1,14 @@
-const express = require("express");
-const cors = require("cors");
-const { errors } = require("celebrate");
+const express = require('express')
+const cors = require('cors')
+const { errors } = require('celebrate')
+const routes = require('./routes')
 
-const Routes = require("./routes");
+const app = express()
 
-class App {
-  constructor() {
-    this.server = express();
+app.use(cors())
+app.use(express.json())
+app.use(routes)
 
-    this.middlewares();
-    this.routes();
-  }
+app.use(errors())
 
-  middlewares() {
-    this.server.use(express.json());
-    this.server.use(errors());
-  }
-
-  routes() {
-    this.server.use(Routes);
-    this.server.use(cors());
-  }
-}
-
-module.exports = new App().server;
+module.exports = app

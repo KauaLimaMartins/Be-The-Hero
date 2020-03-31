@@ -1,29 +1,27 @@
-const connection = require("../database/connection");
-const generateUniqueId = require("../utils/generateUniqueId");
+const generateUniqueId = require('../utils/generateUniqueId')
+const connection = require('../database/connection')
 
-class OngController {
-  async index(request, response) {
-    const ongs = await connection("ongs").select("*");
+module.exports = {
+  async index(req, res) {
+    const ongs = await connection('ongs').select('*')
+  
+    return res.json(ongs)
+  },
 
-    return response.json(ongs);
-  }
+  async create(req, res) {
+    const { name, email, whatsapp, city, uf } = req.body
 
-  async store(request, response) {
-    const { name, email, whatsapp, city, uf } = request.body;
+    const id = generateUniqueId()
 
-    const id = generateUniqueId();
-
-    await connection("ongs").insert({
+    await connection('ongs').insert({
       id,
       name,
       email,
       whatsapp,
       city,
       uf
-    });
+    })
 
-    return response.json({ id });
+    return res.json({ id })
   }
 }
-
-module.exports = new OngController();
