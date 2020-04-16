@@ -11,7 +11,11 @@
 
 Be The Hero is an application developed where people manage to make donations to NGOs who need
 
-<img src="./gifDemo3.gif" />
+<br />
+
+<h1 align="center">
+ <img src="./gifDemo3.gif" width="90%" height="90%" />
+</h1>
 
 <br />
 
